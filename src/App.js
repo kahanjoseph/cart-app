@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import { useState, useEffect } from 'react';
 import Product from "./components/Product";
@@ -9,12 +8,14 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import {forEach} from "react-bootstrap/ElementChildren";
 function App() {
+  /* 2 seperate arrays for products in or out of cart. An individual product should be either in or out of the cart,
+    not both.
+   */
   const [products, setProducts] = useState([]);
   const [carted, setCarted] = useState([]);
-  const [parent, setParent] = useState(null);
 
+  //Disable drag event for small movements, allowing "Add To Cart" btn click
   const mouseSensor = useSensor(MouseSensor, {
     // Require the mouse to move by 10 pixels before activating
     activationConstraint: {
@@ -28,35 +29,66 @@ function App() {
       tolerance: 5,
     },
   });
-
   const sensors = useSensors(
       mouseSensor,
       touchSensor,
   );
 
+  //Fetch the products after render
   useEffect(() => {
     const getProducts = async () => {
       const productsFromServer = await fetchProducts()
       setProducts(productsFromServer);
     }
-
     getProducts();
   }, []);
 
   // Fetch Products
   const fetchProducts = async () => {
+    //Proxy is set in package.json because of CORS
     const res = await fetch('/api/filter_product_listings?format=json');
-    //JSON is returning as a [][]
     const data = await res.json();
     console.log(data);
-    return data[0].sort((a, b) => { return a.price - b.price});
+    //JSON is returning as a [][]
+    return data[0]
   }
 
+  /**
+   * Returns Array with added object sorted by price
+   * @param {array} arrayToSet - an array to set
+   * @param {object} addToArray - an object to add to the array
+   */
+  function addToArray(arrayToSet, addToArray){
+    return [...arrayToSet, addToArray].sort((a, b) => { return a.price - b.price})
+  }
+
+  /**
+   * Returns Array with objects with given ID filtered out
+   * @param {array} arrayToSet - a array to filter
+   * @param {string} removeFromArray - an object ID to remove from array
+   */
+  function filterArray(arrayToSet, removeFromArray){
+    return arrayToSet.filter(obj => obj.id !== removeFromArray);
+  }
+
+  /**
+   * Move product to cart
+   * @param {string} id - The Id to add to cart and remove from products
+   */
   function addToCart(id){
-    const found = products.find(obj => {
-      return obj.id === id;
-    });
-    setCarted([...carted, found]);
+    const found = products.find(obj =>  obj.id === id);
+    setProducts(filterArray(products, id));
+    setCarted(addToArray(carted, found));
+  }
+
+  /**
+   * Remove product to cart
+   * @param {string} id - The ID to remove from the cart
+   */
+  function removeFromCart(id){
+    const found = carted.find(obj => obj.id === id);
+    setProducts(addToArray(products, found));
+    setCarted(filterArray(carted, id));
   }
 
   function handleDragEnd(event) {
@@ -102,14 +134,14 @@ function App() {
                 Select All
                 {products.map((product, index) => (
                     <Draggable id={product.id} key={product.id}>
-                      <Product product={product} key={product.id} addToCart={addToCart}></Product>
+                      <Product product={product} key={product.id} btnClicked={addToCart} btnText='Add To Cart'></Product>
                     </Draggable>
                 ))}
             </div>
             <div className="col col-md-6">
               <p className={'text-start fw-bolder'}>Checkout:</p>
               {carted.map((product, index) => (
-                  <Product product={product} key={product.id}></Product>
+                  <Product product={product} key={product.id} btnClicked={removeFromCart} btnText='Remove From Cart'></Product>
               ))}
               <Droppable id="droppable" props={{'children': ['fjhgjgy']}}>
                 <div className={'border'}><div className={'p-5 border border-info'}>Drop your requests in this area to include them in your checkout list</div></div>

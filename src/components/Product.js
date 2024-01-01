@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-const Product = ({product, addToCart}) => {
+const Product = ({product, btnClicked, btnText}) => {
     return (
         <Card className={'mb-2'}>
             <Card.Body>
@@ -23,8 +23,8 @@ const Product = ({product, addToCart}) => {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-4 offset-8 d-grid gap-2" onClick={() => addToCart(product.id)}>
-                        <Button variant="primary" className={'btn-block'}>Add To Cart</Button>
+                    <div className="col-4 offset-8 d-grid gap-2" onClick={() => btnClicked(product.id)}>
+                        <Button variant="primary" className={'btn-block'}>{btnText}</Button>
                     </div>
                 </div>
             </Card.Body>
@@ -33,5 +33,6 @@ const Product = ({product, addToCart}) => {
 }
 Product.propTypes = {
     product: PropTypes.object.isRequired,
+    btnText: PropTypes.string,
 }
 export default Product;
