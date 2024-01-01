@@ -1,7 +1,27 @@
 import logo from './logo.svg';
 import './App.css';
-
+import { useState, useEffect } from 'react';
 function App() {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const getProducts = async () => {
+      const productsFromServer = await fetchProducts()
+      setProducts(productsFromServer);
+    }
+
+    getProducts();
+  }, []);
+
+  // Fetch Products
+  const fetchProducts = async () => {
+    const res = await fetch('/api/filter_product_listings?format=json');
+    //JSON is returning as a [][]
+    const data = await res.json();
+    console.log(data);
+    return data;
+  }
+
   return (
     <div className="App">
       <header className="App-header">
@@ -18,6 +38,9 @@ function App() {
           Learn React
         </a>
       </header>
+      {products.map((product, index) => (
+          <div>{product.name}</div>
+      ))}
     </div>
   );
 }
