@@ -1,19 +1,25 @@
 import './App.css';
 import { useState, useEffect } from 'react';
 import Product from "./components/Product";
+import Pagination from "./components/Pagination";
 import {DndContext, MouseSensor, TouchSensor, useSensor, useSensors,} from '@dnd-kit/core';
 import {Draggable} from './components/Draggable';
 import {Droppable} from './components/Droppable';
+import ReactDOM from 'react-dom';
+import ReactPaginate from 'react-paginate';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 function App() {
-  /* 2 seperate arrays for products in or out of cart. An individual product should be either in or out of the cart,
-    not both.
-   */
+  //Two seperate arrays for products in or out of cart.
+  //An individual product should be either in or out of the cart.
   const [products, setProducts] = useState([]);
   const [carted, setCarted] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(3);
+
+  const currentProducts = products.slice(currentPage * pageSize - pageSize, currentPage * pageSize);
 
   //Disable drag event for small movements, allowing "Add To Cart" btn click
   const mouseSensor = useSensor(MouseSensor, {
@@ -34,6 +40,10 @@ function App() {
       touchSensor,
   );
 
+  function handlePageClick(page){
+    setCurrentPage(page);
+  }
+
   //Fetch the products after render
   useEffect(() => {
     const getProducts = async () => {
@@ -50,7 +60,7 @@ function App() {
     const data = await res.json();
     console.log(data);
     //JSON is returning as a [][]
-    return data[0]
+    return data[0].sort((a, b) => { return a.price - b.price})
   }
 
   /**
@@ -132,18 +142,19 @@ function App() {
           <div className="row">
             <div className="col col-md-6">
                 Select All
-                {products.map((product, index) => (
+                {currentProducts.map((product, index) => (
                     <Draggable id={product.id} key={product.id}>
                       <Product product={product} key={product.id} btnClicked={addToCart} btnText='Add To Cart'></Product>
                     </Draggable>
                 ))}
+              <Pagination totalCount={products.length} pageSize={pageSize} currentPage={currentPage} siblingCount={4} clicked={handlePageClick}></Pagination>
             </div>
             <div className="col col-md-6">
               <p className={'text-start fw-bolder'}>Checkout:</p>
               {carted.map((product, index) => (
                   <Product product={product} key={product.id} btnClicked={removeFromCart} btnText='Remove From Cart'></Product>
               ))}
-              <Droppable id="droppable" props={{'children': ['fjhgjgy']}}>
+              <Droppable id="droppable">
                 <div className={'border'}><div className={'p-5 border border-info'}>Drop your requests in this area to include them in your checkout list</div></div>
               </Droppable>
             </div>
