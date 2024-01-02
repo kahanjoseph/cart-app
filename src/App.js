@@ -16,7 +16,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState(1);
 
   //Products Per Page
-  const [pageSize] = useState(4);
+  const [pageSize] = useState(3);
 
   const [time, setTime] = useState(180);
 
@@ -89,7 +89,7 @@ function App() {
   // Fetch Products
   const fetchProducts = async () => {
     //Proxy is set in package.json because of CORS
-    const res = await fetch('/api/filter_product_listings?format=json');
+    const res = await fetch('http://localhost:2410');
     const data = await res.json();
     console.log(data);
     //JSON is returning as a [][]
