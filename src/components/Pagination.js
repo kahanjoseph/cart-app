@@ -19,9 +19,8 @@ const Paginate = ({totalCount, pageSize, siblingCount = 1, currentPage = 1, clic
             {/*<Pagination.First />*/}
             {/*<Pagination.Prev />*/}
             {pages.map((it, index) => (
-                <Pagination.Item active={it === currentPage} onClick={() => clicked(it)}>{it}</Pagination.Item>
+                <Pagination.Item active={it === currentPage} key={index} onClick={() => clicked(it)}>{it}</Pagination.Item>
             ))}
-
             {/*<Pagination.Next />*/}
             {/*<Pagination.Last />*/}
         </Pagination>
