@@ -18,6 +18,7 @@ function App() {
   const [carted, setCarted] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(3);
+  const [time, setTime] = useState(900);
 
   const currentProducts = products.slice(currentPage * pageSize - pageSize, currentPage * pageSize);
 
@@ -52,6 +53,17 @@ function App() {
     }
     getProducts();
   }, []);
+
+  useEffect(() => {
+    const id = setTimeout(() => {
+      // We can set conditions here like timeLeft > 0
+      setTime((prev) => prev - 1);
+    }, 1000);
+
+    return () => {
+      clearTimeout(id);
+    };
+  });
 
   // Fetch Products
   const fetchProducts = async () => {
@@ -134,8 +146,8 @@ function App() {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-
-
+      {Math.floor(time/60)}:{time%60}
+      {/*<Timer time={time}></Timer>*/}
 
       <DndContext  onDragEnd={handleDragEnd}  sensors={sensors}>
         <div className="container">
