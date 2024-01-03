@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import {DndContext, MouseSensor, TouchSensor, useSensor, useSensors,} from '@dnd-kit/core';
 import {Draggable} from './components/dndComponnents/Draggable';
 import {Droppable} from './components/dndComponnents/Droppable';
+import Timer from "./components/Timer";
 
 function App() {
   //Two seperate arrays for products in or out of cart.
@@ -151,16 +152,11 @@ function App() {
   return (
     <div className="App">
       <Navbar></Navbar>
-      {
-        time > 0 ?
-              <div className="alert alert-danger" role="alert">
-                You have {Math.floor(time/60)}:{time%60} left to check out these items!
-              </div>
-        :
-              <div className="alert alert-danger" role="alert">
-                You have run out of time to check out! Please start over
-              </div>
-      }
+      <Timer time={time}>
+        <div className="alert alert-danger" role="alert">
+          You have {Math.floor(time/60)}:{time%60} left to check out these items!
+        </div>
+      </Timer>
 
       <DndContext  onDragEnd={handleDragEnd} sensors={sensors}>
         <div className="container">
@@ -198,18 +194,13 @@ function App() {
                   </div>
                 </div>
               </Droppable>
-              {
-                time > 0 ?
-                    <div className="row mt-3 mb-3">
-                      <div className="col-12 col-lg-6">Total: ${cartTotal}</div>
-                      <div className="col-12 col-lg-6">
-                        <button type="button" className="btn btn-success" onClick={(event) => checkout(event)}>Go To Checkout</button></div>
-                    </div>
-                    :
-                    <div className="alert alert-danger" role="alert">
-                      You have run out of time to check out! Please start over
-                    </div>
-              }
+              <Timer time={time}>
+                <div className="row mt-3 mb-3">
+                  <div className="col-12 col-lg-6">Total: ${cartTotal}</div>
+                  <div className="col-12 col-lg-6">
+                    <button type="button" className="btn btn-success" onClick={(event) => checkout(event)}>Go To Checkout</button></div>
+                </div>
+              </Timer>
             </div>
           </div>
         </div>
