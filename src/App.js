@@ -93,7 +93,6 @@ function App() {
     //Proxy is set in package.json because of CORS
     const res = await fetch('http://localhost:2410');
     const data = await res.json();
-    console.log(data);
     //JSON is returning as a [][]
     return data[0].sort((a, b) => { return a.price - b.price});
   }
