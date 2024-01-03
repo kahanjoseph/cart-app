@@ -19,6 +19,7 @@ function App() {
   //Products Per Page
   const [pageSize] = useState(3);
 
+  //Timer to checkout in seconds
   const [time, setTime] = useState(180);
 
   //Update anytime the cart state changes
