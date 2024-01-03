@@ -1,10 +1,11 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 import App from './App';
 
 describe('App', () => {
   beforeEach(() => {
     global.fetch = jest.fn();
+    console.log = jest.fn();
   });
 
   it('should render the products with fetched data', async () => {
@@ -66,6 +67,21 @@ describe('App', () => {
     );
 
     render(<App />);
-    await screen.findByText('Lucky You Cologne Spray for Men, 3.4 Ounce');
+
+    //Test if products fetched from API are rendering
+    const product = await screen.findByText('Lucky You Cologne Spray for Men, 3.4 Ounce');
+    expect(product).toBeInTheDocument();
+
+    // Add the product to the cart
+    const btn = await screen.findAllByText('Add To Cart');
+    fireEvent.click(btn[0]);
+
+    //Test if product shows in cart
+    const cartButton = await screen.findByText('Remove From Cart');
+    expect(cartButton).toBeInTheDocument();
+
+    //Checkout the cart
+    fireEvent.click(await screen.findByText('Go To Checkout'));
+    expect(console.log).toHaveBeenCalledWith('Checkout Total Is: 13.75');
   });
 });
