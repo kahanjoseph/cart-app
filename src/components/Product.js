@@ -18,6 +18,7 @@ const Product = ({product, btnClicked, btnText, children}) => {
                         </div>
                         </div>
                     <div className="col-12 col-lg-4">
+                        <p className={'mb-2 text-center text-lg-start'}>Category: {product.product_group}</p>
                         <p className={'mb-2 text-center text-lg-start'}>Rank: {product.seller_rank}</p>
                         <p className={'mb-2 text-center text-lg-start'}>Price: ${product.price}</p>
                         {children}

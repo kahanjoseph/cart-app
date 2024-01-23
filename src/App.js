@@ -91,10 +91,12 @@ function App() {
   // Fetch Products
   const fetchProducts = async () => {
     //Proxy is set in package.json because of CORS
-    const res = await fetch('http://localhost:2410');
+    const res = await fetch('/api/filter_product_listings?format=json');
     const data = await res.json();
     //JSON is returning as a [][]
-    return data[0].sort((a, b) => { return a.price - b.price});
+    return data[0].sort((a, b) => {
+      return a.product_group > b.product_group || a.price - b.price;
+    });
   }
 
   //Handles quantity change in cart
